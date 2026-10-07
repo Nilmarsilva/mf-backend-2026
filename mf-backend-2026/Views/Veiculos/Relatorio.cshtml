@@ -1,0 +1,37 @@
+@model IEnumerable<mf_backend_2026.Models.Consumo>
+
+@{
+    ViewData["Title"] = "Relatório de Consumos";
+}
+
+<h1>Relatório de Consumos - @ViewBag.Veiculo?.Nome</h1>
+
+<h3><strong>Total gasto:</strong> @((ViewBag.TotalConsumos ?? 0m).ToString("C"))</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Quilometragem</th>
+            <th>Tipo</th>
+           
+        </tr>
+    </thead>
+    <tbody>
+@foreach(var c in Model) {
+    <tr>
+        <td>@c.Data.ToString("dd/MM/yyyy")</td>
+        <td>@c.Descricao</td>
+        <td>@c.Valor.ToString("C")</td>
+        <td>@c.KM</td>
+        <td>@c.Tipo</td>
+    </tr>
+}
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Index" class="btn btn-info">Voltar</a>
+</div>

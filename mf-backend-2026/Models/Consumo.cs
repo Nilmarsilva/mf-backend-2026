@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace mf_backend_2026.Models
@@ -44,6 +44,6 @@ namespace mf_backend_2026.Models
         Etanol,
         Diesel,
         Outros
-    }
+}
 
 }

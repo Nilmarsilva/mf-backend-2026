@@ -124,6 +124,7 @@ public class ConsumosController : Controller
         }
 
         var consumo = await _context.Consumos
+            .Include(c => c.Veiculo)
             .FirstOrDefaultAsync(m => m.id == id);
         if (consumo == null)
         {
