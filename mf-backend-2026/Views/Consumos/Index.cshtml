@@ -1,0 +1,71 @@
+@model IEnumerable<mf_backend_2026.Models.Consumo>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Lista de Consumos</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Adicionar novo consumo</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Descricao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Data)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Valor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KM)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tipo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Veiculo)
+            </th>
+            <th>
+                ID
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.Descricao)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Data)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Valor)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.KM)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Tipo)
+            </td>
+            <td>
+                @item.Veiculo?.Nome
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.VeiculoId)
+            </td>
+            <td>
+                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.id">Editar</a> |
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.id">Visualizar</a> |
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.id">Deletar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
