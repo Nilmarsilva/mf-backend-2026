@@ -2,10 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using mf_backend_2026.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 public class UsuariosController : Controller
 {
     private readonly AppDbContext _context;
+
+    public ClaimsPrincipal ClaimsPrincipal { get; private set; }
 
     public UsuariosController(AppDbContext context)
     {
@@ -16,6 +20,66 @@ public class UsuariosController : Controller
     public async Task<IActionResult> Index()    
     {
         return View(await _context.Usuarios.ToListAsync());
+    }
+
+    public IActionResult Login()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Login(Usuario usuario)
+    {
+         if (usuario == null || usuario.Id == 0)
+        {
+            ViewBag.Mensagem = "Usuário e/ou senha incorretos!";
+            return View();
+        }
+
+        var dados = await _context.Usuarios.FindAsync(usuario.Id);
+
+        if (dados == null)
+        {
+            ViewBag.Mensagem = "Usuário e/ou senha incorretos!";
+            return View();
+        }
+
+        bool senhaok = BCrypt.Net.BCrypt.Verify(usuario.Senha, dados.Senha);
+
+        if (!senhaok)
+        {
+            ViewBag.Mensagem = "Usuário e/ou senha incorretos!";
+            return View();
+        }
+
+        // Credenciais válidas: criar claims e autenticar
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, dados.Nome),
+            new Claim(ClaimTypes.NameIdentifier, dados.Id.ToString()),
+            new Claim(ClaimTypes.Role, dados.Perfil.ToString())
+        };
+        var claimsIdentity = new ClaimsIdentity(claims, "Login");
+        var principal = new ClaimsPrincipal(claimsIdentity);
+
+        var props = new Microsoft.AspNetCore.Authentication.AuthenticationProperties
+        {
+            AllowRefresh = true,
+            ExpiresUtc = DateTime.UtcNow.AddMinutes(10),
+            IsPersistent = true
+        };
+
+        // usar o mesmo esquema de cookie ao autenticar
+        await HttpContext.SignInAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme, principal, props);
+
+        HttpContext.Session.SetInt32("UsuarioId", dados.Id);
+        return RedirectToAction("Index", "Home");
+    }
+
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Clear();
+        return RedirectToAction("Login", "Usuarios");
     }
 
     // GET: USUARIOS/Details/5

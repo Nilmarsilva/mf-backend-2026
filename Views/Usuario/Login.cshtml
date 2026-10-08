@@ -1,0 +1,50 @@
+@model IEnumerable<mf_backend_2026.Models.Usuario>
+@using System.Reflection
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            @foreach (var prop in typeof(mf_backend_2026.Models.Usuario).GetProperties())
+            {
+                <th>@prop.Name</th>
+            }
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                @foreach (var prop in typeof(mf_backend_2026.Models.Usuario).GetProperties())
+                {
+                    <td>@(prop.GetValue(item))</td>
+                }
+                <td>
+                    @{
+                        // tenta obter uma propriedade de chave primária chamada Id, id ou usuarioId
+                        var idProp = typeof(mf_backend_2026.Models.Usuario).GetProperty("Id")
+                                     ?? typeof(mf_backend_2026.Models.Usuario).GetProperty("id")
+                                     ?? typeof(mf_backend_2026.Models.Usuario).GetProperty("UsuarioId")
+                                     ?? typeof(mf_backend_2026.Models.Usuario).GetProperty("usuarioId");
+                        var idVal = idProp != null ? idProp.GetValue(item) : null;
+                    }
+                    <a asp-action="Edit" asp-route-id="@idVal">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@idVal">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@idVal">Delete</a>
+                </td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>

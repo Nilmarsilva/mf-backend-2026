@@ -21,4 +21,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.24.2-preview.1" />
   </ItemGroup>
 
+  <!-- Observação: não incluir explicitamente arquivos Razor; SDK os gerencia automaticamente -->
+
 </Project>
