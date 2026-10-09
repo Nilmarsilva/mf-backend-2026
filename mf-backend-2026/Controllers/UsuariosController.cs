@@ -4,7 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using mf_backend_2026.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
+namespace mf_backend_2026.Controllers
+{ 
+    [Authorize(Roles ="Admin")]
 public class UsuariosController : Controller
 {
     private readonly AppDbContext _context;
@@ -16,18 +22,47 @@ public class UsuariosController : Controller
         _context = context;
     }
 
+    // Preenche informações do usuário autenticado para as views (nome, perfil e se está autenticado)
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        base.OnActionExecuting(context);
+
+        if (User?.Identity != null && User.Identity.IsAuthenticated)
+        {
+            var nome = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+            var perfil = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+            ViewBag.UsuarioNome = nome;
+            ViewBag.UsuarioPerfil = perfil;
+            ViewBag.EstaAutenticado = true;
+        }
+        else
+        {
+            ViewBag.UsuarioNome = null;
+            ViewBag.UsuarioPerfil = null;
+            ViewBag.EstaAutenticado = false;
+        }
+    }
+
     // GET: USUARIOS
     public async Task<IActionResult> Index()    
     {
         return View(await _context.Usuarios.ToListAsync());
     }
 
-    public IActionResult Login()
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        public IActionResult Login()
     {
         return View();
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> Login(Usuario usuario)
     {
          if (usuario == null || usuario.Id == 0)
@@ -76,9 +111,14 @@ public class UsuariosController : Controller
         return RedirectToAction("Index", "Home");
     }
 
-    public IActionResult Logout()
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [AllowAnonymous]
+        public async Task<IActionResult> Logout()
     {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         HttpContext.Session.Clear();
+        TempData["Mensagem"] = "Usuário deslogado com sucesso!";
         return RedirectToAction("Login", "Usuarios");
     }
 
@@ -212,4 +252,5 @@ public class UsuariosController : Controller
     {
         return _context.Usuarios.Any(e => e.Id == id);
     }
+}
 }

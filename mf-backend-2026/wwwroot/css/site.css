@@ -29,3 +29,52 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.btn-padrao {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: #0d6efd; /* ou a cor do padrão que você usa */
+    color: #fff;
+    border: none;
+    text-decoration: none;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-name {
+    font-weight: 600;
+}
+
+.user-role {
+    font-size: 0.9em;
+    color: #ddd;
+}
+
+/* Estilos para a página de login centralizada */
+.login-container {
+    min-height: calc(100vh - 140px); /* considerar header/footer */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 15px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 10px;
+}
+
+/* Ajustes para o botão padrão no card */
+.login-card .btn-padrao {
+    width: 100%;
+    padding: 10px 14px;
+}
+
+@media (max-width: 576px) {
+    .login-card { margin: 0 10px; }
+}

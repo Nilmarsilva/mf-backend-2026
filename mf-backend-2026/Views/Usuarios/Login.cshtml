@@ -3,35 +3,47 @@
     ViewData["Title"] = "Login";
 }
 
+@* Seção: Container principal que centraliza vertical e horizontalmente a tela de login *@
+<div class="login-container">
+    @* Seção: Card do formulário de login *@
+    <div class="card login-card shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-3">Acessar Sistema</h2>
+            <p class="text-muted text-center">Informe seu ID e senha para entrar</p>
 
-<h1>Login</h1>
+            @* Seção: Formulário de autenticação *@
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
 
-<h4> Usuário </h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Login" method="post">
-            @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" type="number" min="1" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Senha" class="control-label"></label>
-                <input asp-for="Senha" class="form-control" type="password" autocomplete="current-password" />
-                <span asp-validation-for="Senha" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Acessar" class="btn btn-success" />
-            </div>
-        </form>
-    <h3>@ViewBag.Mensagem</h3>
+                <div class="mb-3">
+                    <label asp-for="Id" class="form-label"></label>
+                    <input asp-for="Id" class="form-control" type="number" min="1" />
+                    <span asp-validation-for="Id" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Senha" class="form-label"></label>
+                    <input asp-for="Senha" class="form-control" type="password" autocomplete="current-password" />
+                    <span asp-validation-for="Senha" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-padrao">Acessar</button>
+                </div>
+            </form>
+
+            @* Seção: Mensagem de feedback (ex.: credenciais incorretas) *@
+            @if (!string.IsNullOrEmpty(ViewBag.Mensagem))
+            {
+                <div class="alert alert-danger mt-3" role="alert">@ViewBag.Mensagem</div>
+            }
+        </div>
     </div>
 </div>
 
 @section Scripts {
+    @* Seção: Scripts de validação *@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
